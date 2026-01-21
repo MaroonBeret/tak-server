@@ -7,3 +7,10 @@ originalWAR/
 chatbot/
 server.pref
 manifest.xml
+
+# AK as a Service customizations
+*.db
+*.db-journal
+qr-*.png
+infra/.env
+customizations/provisioning-api/.env

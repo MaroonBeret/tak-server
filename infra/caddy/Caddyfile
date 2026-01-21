@@ -1,0 +1,32 @@
+{
+    email ops@karabastactical.nl
+}
+
+tak.karabastactical.nl {
+    # Enrollment API (proxied with trusted TLS)
+    handle /Marti/api/tls/* {
+        reverse_proxy tak:8446 {
+            transport http {
+                tls_insecure_skip_verify   # TAK uses self-signed internally
+            }
+        }
+    }
+
+    # Admin interface
+    handle /Marti/* {
+        reverse_proxy tak:8446 {
+            transport http {
+                tls_insecure_skip_verify   # TAK uses self-signed internally
+            }
+        }
+    }
+
+    # Health check
+    handle /health {
+        respond "OK" 200
+    }
+
+    # Future: Captain portal and provisioning API
+    # handle /captain/* { ... }
+    # handle /api/* { ... }
+}

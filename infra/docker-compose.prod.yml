@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  db:
+    build:
+      context: ..
+      dockerfile: ./docker/amd64/Dockerfile.takserver-db
+    volumes:
+      - "db_data:/var/lib/postgresql/data:z"
+      - "../tak:/opt/tak:z"
+    networks:
+      - internal
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+
+  tak:
+    build:
+      context: ..
+      dockerfile: ./docker/amd64/Dockerfile.takserver
+    env_file:
+      - .env
+    volumes:
+      - "../tak:/opt/tak:z"
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "8089:8089"   # CoT TLS (direct, client has cert after enrollment)
+      - "8446:8446"   # Admin HTTPS (only exposed internally for Caddy)
+    networks:
+      - internal
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "443:443"
+      - "80:80"       # ACME challenge
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - internal
+    depends_on:
+      - tak
+    restart: unless-stopped
+
+volumes:
+  db_data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  internal:
