@@ -1,4 +1,4 @@
-# Claude Code Context: AK as a Service
+# Claude Code Context: TAK as a Service
 
 **Last Updated:** 2026-01-22
 **Current Phase:** Phase 1 - QR Enrollment POC
