@@ -9,7 +9,9 @@ services:
       - "db_data:/var/lib/postgresql/data:z"
       - "../tak:/opt/tak:z"
     networks:
-      - internal
+      internal:
+        aliases:
+          - tak-database
     restart: unless-stopped
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
